@@ -59,6 +59,7 @@ public class AuthenticationService {
             }
         }
         else {
+            LOGGER.info("otp {} shared by user is not  valid",request.getOtp());
             return AuthenticationResponse.builder().status(AuthStatus.OTP_IS_NOT_VALID)
                     .build();
         }
@@ -93,18 +94,19 @@ public class AuthenticationService {
                 return AuthenticationResponse.builder().accessToken(jwtToken)
                         .build();
             }
-             catch(AuthenticationException au)
-             {
-                 LOGGER.info("Authentication exception occurred in time of Authenticate Username & password-> {}", au.toString());
-                 return AuthenticationResponse.builder().status(AuthStatus.USER_NOT_AUTHENTICATE)
-                         .build();
-             }
+            catch(AuthenticationException au)
+            {
+                LOGGER.info("Authentication exception occurred in time of Authenticate Username & password-> {}", au.toString());
+                return AuthenticationResponse.builder().status(AuthStatus.USER_NOT_AUTHENTICATE)
+                        .build();
+            }
             catch (Exception e) {
                 LOGGER.info("Exception come while extract  & validate the user detail from DB -> {}", e.toString());
                 return AuthenticationResponse.builder().status(AuthStatus.INTERNAL_SERVER_ERROR)
                         .build();
             }
         } else {
+            LOGGER.info("otp {} shared by user is not  valid",request.getOtp());
             return AuthenticationResponse.builder().status(AuthStatus.OTP_IS_NOT_VALID)
                     .build();
         }
@@ -114,26 +116,30 @@ public class AuthenticationService {
 
         var isOtpValid =  otpService(request.getUserName(), request.getOtp());
         if(isOtpValid) {
-          try {
-              var findUserName = repository.findByUserName(request.getUserName());
-              if (findUserName.isPresent()) {
-                  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUserName(), request.getUserName()));
-                  var jwtToken = jwtService.generateJwtToken(findUserName.get());
-                  return AuthenticationResponse.builder().status(AuthStatus.AUTHENTICATED_USER).accessToken(jwtToken)
-                          .build();
-              } else {
-                  return AuthenticationResponse.builder().status(AuthStatus.USER_NOT_REGISTER)
-                          .build();
-              }
-          }
-          catch(Exception e)
-          {
-              LOGGER.info("Exception come while extract  & validate the user detail from DB -> {}", e.toString());
-              return AuthenticationResponse.builder().status(AuthStatus.INTERNAL_SERVER_ERROR)
-                      .build();
-          }
+            try {
+                LOGGER.info("otp {} shared by user is valid",request.getOtp());
+                var findUserName = repository.findByUserName(request.getUserName());
+                if (findUserName.isPresent()) {
+                    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUserName(), request.getUserName()));
+                    var jwtToken = jwtService.generateJwtToken(findUserName.get());
+                    LOGGER.info("user is  register with  us for username ->{}",request.getUserName());
+                    return AuthenticationResponse.builder().status(AuthStatus.AUTHENTICATED_USER).accessToken(jwtToken)
+                            .build();
+                } else {
+                    LOGGER.info("user is not register with  us for username ->{}",request.getUserName());
+                    return AuthenticationResponse.builder().status(AuthStatus.USER_NOT_REGISTER)
+                            .build();
+                }
+            }
+            catch(Exception e)
+            {
+                LOGGER.info("Exception come while extract  & validate the user detail from DB -> {}", e.toString());
+                return AuthenticationResponse.builder().status(AuthStatus.INTERNAL_SERVER_ERROR)
+                        .build();
+            }
         }
         else {
+            LOGGER.info("otp {} shared by user is not  valid",request.getOtp());
             return AuthenticationResponse.builder().status(AuthStatus.OTP_IS_NOT_VALID)
                     .build();
         }
@@ -175,6 +181,7 @@ public class AuthenticationService {
             }
         }
         else {
+            LOGGER.info("otp {} shared by user is not  valid",request.getOtp());
             return AuthenticationResponse.builder().status(AuthStatus.OTP_IS_NOT_VALID)
                     .build();
         }
