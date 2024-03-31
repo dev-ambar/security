@@ -60,7 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     // check token is valid and exist in db
                     var isTokenValid = tokenRepository.findByToken(jwt).map(token -> !token.isExpired() && !token.isRevoked()).orElse(false);
-
                     // check again still userToken is valid
                     if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
                         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -68,7 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
                 } catch (UsernameNotFoundException ue) {
-                    LOGGER.info("user detail not fount corresponding user associate with JWt token  : {}", ue.getMessage());
+                    LOGGER.info("user detail not found corresponding user associate with JWt token  : {}", ue.getMessage());
                     response.setStatus(403);
                     filterChain.doFilter(request, response);
                     return;

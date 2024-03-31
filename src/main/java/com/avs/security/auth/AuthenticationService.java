@@ -49,7 +49,7 @@ public class AuthenticationService {
 
                 saveUserToken(saveUser, jwtToken);
                 LOGGER.info("user {} register successfully  in database",request.getUserName());
-                return AuthenticationResponse.builder().accessToken(jwtToken).status("PASSED")
+                return AuthenticationResponse.builder().accessToken(jwtToken).status(AuthStatus.USER_REGISTER)
                         .build();
             }
             else {
@@ -91,7 +91,7 @@ public class AuthenticationService {
 
                 var jwtToken = jwtService.generateJwtToken(user);
                 LOGGER.info("user {} is authenticate successfully ",request.getUserName());
-                return AuthenticationResponse.builder().accessToken(jwtToken)
+                return AuthenticationResponse.builder().accessToken(jwtToken).status(AuthStatus.AUTHENTICATED_USER)
                         .build();
             }
             catch(AuthenticationException au)
